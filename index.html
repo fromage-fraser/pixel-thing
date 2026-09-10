@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pixel Thing</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="app-header">
+        <h1>Pixel Thing</h1>
+        <p class="tagline">Turn an image into a pixelated PNG texture.</p>
+      </header>
+
+      <section class="controls" aria-label="Target dimensions">
+        <label class="field">
+          <span>Width</span>
+          <input id="width" type="number" min="1" max="1024" step="1" value="32" />
+        </label>
+        <span class="times" aria-hidden="true">&times;</span>
+        <label class="field">
+          <span>Height</span>
+          <input id="height" type="number" min="1" max="1024" step="1" value="32" />
+        </label>
+        <label class="field field-check">
+          <input id="lock" type="checkbox" checked />
+          <span>Lock to square</span>
+        </label>
+      </section>
+
+      <div class="panes">
+        <section class="pane" aria-label="Source image">
+          <h2>Source</h2>
+          <div id="dropzone" class="dropzone">
+            <div id="stage" class="stage" hidden>
+              <canvas id="source-canvas"></canvas>
+              <div id="crop-overlay" class="crop-overlay" hidden>
+                <div class="crop-box" data-role="move">
+                  <span class="handle" data-handle="nw"></span>
+                  <span class="handle" data-handle="ne"></span>
+                  <span class="handle" data-handle="se"></span>
+                  <span class="handle" data-handle="sw"></span>
+                </div>
+              </div>
+            </div>
+            <div id="placeholder" class="placeholder">
+              <p><strong>Drop a JPEG or PNG here</strong></p>
+              <p class="or">or</p>
+              <label class="button" for="file">Choose a file</label>
+            </div>
+          </div>
+          <input id="file" class="visually-hidden" type="file" accept="image/png,image/jpeg" />
+          <p id="source-info" class="info"></p>
+          <label id="replace" class="button button-quiet" for="file" hidden>Choose another image</label>
+        </section>
+
+        <section class="pane" aria-label="Output image">
+          <h2>Output</h2>
+          <div class="output-frame">
+            <canvas id="output-canvas" class="output-canvas" hidden></canvas>
+          </div>
+          <p id="output-info" class="info"></p>
+          <button id="save" type="button" class="button button-primary" disabled>Save PNG</button>
+        </section>
+      </div>
+
+      <p id="error" class="error" role="alert" hidden></p>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
