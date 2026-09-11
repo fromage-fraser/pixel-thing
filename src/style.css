@@ -184,6 +184,30 @@ h2 {
   box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
 }
 
+/* A small crosshair marking the exact centre of the crop, for lining a subject up. */
+.crop-box::before,
+.crop-box::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.85);
+  pointer-events: none;
+}
+
+/* Arms shrink with the box, so a crop at its minimum size is not overrun. */
+.crop-box::before {
+  width: min(13px, 50%);
+  height: 1px;
+}
+
+.crop-box::after {
+  width: 1px;
+  height: min(13px, 50%);
+}
+
 .handle {
   position: absolute;
   width: 14px;

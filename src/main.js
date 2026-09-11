@@ -8,6 +8,10 @@ const MIN_DIMENSION = 1;
 const MAX_DIMENSION = 1024;
 const PREVIEW_MAX_EDGE = 512;
 const PREVIEW_MAX_SCALE = 8;
+// Textures larger than this on either edge are magnified less, so a bigger target does not
+// also mean a much bigger preview.
+const PREVIEW_LARGE_EDGE = 32;
+const PREVIEW_LARGE_SCALE = 4;
 const ACCEPTED_TYPES = new Set(['image/png', 'image/jpeg']);
 
 const el = (id) => document.getElementById(id);
@@ -158,6 +162,13 @@ for (const type of ['dragover', 'drop']) {
 
 // --- pipeline -------------------------------------------------------------
 
+/** Magnification for the output preview: 8x up to 32 px on an edge, 4x above that. */
+function previewScale(targetW, targetH) {
+  const edge = Math.max(targetW, targetH);
+  const max = edge > PREVIEW_LARGE_EDGE ? PREVIEW_LARGE_SCALE : PREVIEW_MAX_SCALE;
+  return Math.max(1, Math.min(max, Math.floor(PREVIEW_MAX_EDGE / edge)));
+}
+
 function render() {
   const crop = cropper.getCrop();
   if (!state.bitmap || !crop) {
@@ -173,10 +184,7 @@ function render() {
   outputCanvas.height = targetH;
   outputCanvas.getContext('2d').drawImage(result, 0, 0);
 
-  const scale = Math.max(
-    1,
-    Math.min(PREVIEW_MAX_SCALE, Math.floor(PREVIEW_MAX_EDGE / Math.max(targetW, targetH))),
-  );
+  const scale = previewScale(targetW, targetH);
   outputCanvas.style.width = `${targetW * scale}px`;
   outputCanvas.style.height = `${targetH * scale}px`;
   outputCanvas.hidden = false;
