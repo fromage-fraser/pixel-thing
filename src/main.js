@@ -2,6 +2,7 @@
 
 import { createCropper } from './cropper.js';
 import { pixelate } from './pixelate.js';
+import { countColours, quantise } from './quantise.js';
 import { downloadCanvasAsPng, outputFileName } from './download.js';
 
 const MIN_DIMENSION = 1;
@@ -19,6 +20,7 @@ const el = (id) => document.getElementById(id);
 const widthInput = el('width');
 const heightInput = el('height');
 const lockInput = el('lock');
+const coloursInput = el('colours');
 const fileInput = el('file');
 const dropzone = el('dropzone');
 const stage = el('stage');
@@ -36,6 +38,8 @@ const state = {
   fileName: '',
   targetW: 32,
   targetH: 32,
+  // 'actual' keeps whatever colours pixelation resolves; a bit depth caps the output at 2**n.
+  depth: 'actual',
 };
 
 const cropper = createCropper({
@@ -100,6 +104,14 @@ for (const input of [widthInput, heightInput]) {
 
 lockInput.addEventListener('change', () => {
   if (lockInput.checked) applyDimensions(widthInput);
+});
+
+// --- colours --------------------------------------------------------------
+
+coloursInput.addEventListener('change', () => {
+  const value = coloursInput.value;
+  state.depth = value === 'actual' ? 'actual' : Number(value);
+  render();
 });
 
 // --- loading a source image ----------------------------------------------
@@ -179,17 +191,24 @@ function render() {
   const { targetW, targetH } = state;
   const result = pixelate(state.bitmap, crop, targetW, targetH);
 
+  // Quantise on the pixels themselves. Restricting colours always starts from a freshly
+  // pixelated image, so switching between settings never compounds two reductions.
+  const image = result.getContext('2d').getImageData(0, 0, targetW, targetH);
+  if (state.depth !== 'actual') quantise(image, 2 ** state.depth);
+
   // Copy 1:1 into the on-page canvas, then magnify it with CSS so the preview stays crisp.
+  // putImageData writes alpha straight through instead of compositing it.
   outputCanvas.width = targetW;
   outputCanvas.height = targetH;
-  outputCanvas.getContext('2d').drawImage(result, 0, 0);
+  outputCanvas.getContext('2d').putImageData(image, 0, 0);
 
   const scale = previewScale(targetW, targetH);
   outputCanvas.style.width = `${targetW * scale}px`;
   outputCanvas.style.height = `${targetH * scale}px`;
   outputCanvas.hidden = false;
 
-  outputInfo.textContent = `${targetW} x ${targetH} px, shown at ${scale}x`;
+  outputInfo.textContent =
+    `${targetW} x ${targetH} px, shown at ${scale}x, ${countColours(image)} colours`;
   sourceInfo.textContent =
     `${state.fileName} — ${state.bitmap.width} x ${state.bitmap.height} px, ` +
     `cropping ${Math.round(crop.sw)} x ${Math.round(crop.sh)} px`;

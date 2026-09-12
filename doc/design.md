@@ -33,4 +33,4 @@ The application should be a simple page that:
 - Should pixelate the source image to the given target dimensions.
 - Should preview the output image, but scaled so that it is clearly visible (e.g. 8x magnification).
 - Should have a "Save" button that appears active when the image is successfully transformed. Saving will download the target PNG.
-
+- The user is also able to select from a dropdown the colours to use in the target image. The options include the actual colours resolved during pixelation, or a colour depth from "8-bit" (256 colours) down to "3-bit" (8 colours). These other options are restrictions to the set of possible output colours: at most 2^n of them, chosen from the image itself.
