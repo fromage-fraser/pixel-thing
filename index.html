@@ -13,7 +13,7 @@
         <p class="tagline">Turn an image into a pixelated PNG texture.</p>
       </header>
 
-      <section class="controls" aria-label="Target dimensions">
+      <section class="controls" aria-label="Output settings">
         <label class="field">
           <span>Width</span>
           <input id="width" type="number" min="1" max="1024" step="1" value="32" />
@@ -26,6 +26,18 @@
         <label class="field field-check">
           <input id="lock" type="checkbox" checked />
           <span>Lock to square</span>
+        </label>
+        <label class="field">
+          <span>Colours</span>
+          <select id="colours">
+            <option value="actual" selected>Actual colours</option>
+            <option value="8">8-bit (256 colours)</option>
+            <option value="7">7-bit (128 colours)</option>
+            <option value="6">6-bit (64 colours)</option>
+            <option value="5">5-bit (32 colours)</option>
+            <option value="4">4-bit (16 colours)</option>
+            <option value="3">3-bit (8 colours)</option>
+          </select>
         </label>
       </section>
 

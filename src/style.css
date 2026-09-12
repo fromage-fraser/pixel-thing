@@ -84,8 +84,8 @@ h2 {
   color: var(--muted);
 }
 
-.field input[type="number"] {
-  width: 6rem;
+.field input[type="number"],
+.field select {
   padding: 0.4rem 0.5rem;
   font: inherit;
   font-size: 1rem;
@@ -93,6 +93,15 @@ h2 {
   background: var(--bg);
   border: 1px solid var(--line);
   border-radius: 6px;
+}
+
+.field input[type="number"] {
+  width: 6rem;
+}
+
+/* Wide enough for "8-bit (256 colours)", so the control does not resize with the selection. */
+.field select {
+  min-width: 12rem;
 }
 
 .field-check {
